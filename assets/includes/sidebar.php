@@ -42,6 +42,12 @@ $menuBaseUrl = htmlspecialchars(HOTEL_BASE_URL, ENT_QUOTES, 'UTF-8');
                         <span>Usuarios</span>
                     </a>
                 </li>
+                <li>
+                    <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/personas/index.php">
+                        <i class="fa-solid fa-address-card" aria-hidden="true"></i>
+                        <span>Personas</span>
+                    </a>
+                </li>
             <?php endif; ?>
         </ul>
     </nav>

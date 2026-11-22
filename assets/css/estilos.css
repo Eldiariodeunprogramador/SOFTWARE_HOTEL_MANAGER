@@ -375,7 +375,8 @@ body {
     color: #173f3d;
 }
 
-.usuarios-cabecera {
+.usuarios-cabecera,
+.personas-cabecera {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -383,7 +384,8 @@ body {
     margin-bottom: 24px;
 }
 
-.usuarios-cabecera p {
+.usuarios-cabecera p,
+.personas-cabecera p {
     margin-top: 8px;
     color: #555555;
 }
@@ -431,20 +433,24 @@ body {
     background: #842626;
 }
 
-.formulario-usuario {
+.formulario-usuario,
+.formulario-persona {
     display: grid;
     max-width: 620px;
     gap: 10px;
 }
 
-.formulario-usuario label {
+.formulario-usuario label,
+.formulario-persona label {
     margin-top: 8px;
     color: #173f3d;
     font-weight: 700;
 }
 
 .formulario-usuario input,
-.formulario-usuario select {
+.formulario-usuario select,
+.formulario-persona input,
+.formulario-persona select {
     width: 100%;
     min-height: 44px;
     padding: 10px 12px;
@@ -460,7 +466,9 @@ body {
 }
 
 .formulario-usuario input:focus,
-.formulario-usuario select:focus {
+.formulario-usuario select:focus,
+.formulario-persona input:focus,
+.formulario-persona select:focus {
     outline: 3px solid rgba(74, 166, 157, 0.25);
     border-color: #398e86;
 }
@@ -482,12 +490,14 @@ body {
     font-size: 14px;
 }
 
-.formulario-usuario .boton-accion {
+.formulario-usuario .boton-accion,
+.formulario-persona .boton-accion {
     justify-self: start;
     margin-top: 12px;
 }
 
-.mensaje-usuarios {
+.mensaje-usuarios,
+.mensaje-registro {
     margin-bottom: 18px;
 }
 
@@ -502,31 +512,37 @@ body {
     overflow-x: auto;
 }
 
-.tabla-usuarios {
+.tabla-usuarios,
+.tabla-personas {
     width: 100%;
     border-collapse: collapse;
     text-align: left;
 }
 
 .tabla-usuarios th,
-.tabla-usuarios td {
+.tabla-usuarios td,
+.tabla-personas th,
+.tabla-personas td {
     padding: 12px;
     border-bottom: 1px solid #d5e6e3;
     vertical-align: middle;
 }
 
-.tabla-usuarios th {
+.tabla-usuarios th,
+.tabla-personas th {
     color: #173f3d;
     background: #f7fbfa;
 }
 
-.acciones-usuario {
+.acciones-usuario,
+.acciones-persona {
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.acciones-usuario form {
+.acciones-usuario form,
+.acciones-persona form {
     margin: 0;
 }
 
@@ -641,7 +657,8 @@ body {
         margin-top: 8px;
     }
 
-    .usuarios-cabecera {
+    .usuarios-cabecera,
+    .personas-cabecera {
         align-items: flex-start;
         flex-direction: column;
     }
