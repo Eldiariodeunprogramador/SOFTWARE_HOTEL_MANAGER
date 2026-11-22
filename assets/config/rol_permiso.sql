@@ -23,4 +23,5 @@ INSERT IGNORE INTO permisos (nombre, modulo, descripcion) VALUES
     ('huespedes.crear', 'huespedes', 'Crear huéspedes'),
     ('huespedes.editar', 'huespedes', 'Editar huéspedes'),
     ('pagos.ver', 'pagos', 'Consultar pagos'),
+    ('pagos.registrar', 'pagos', 'Registrar pagos de reservas'),
     ('reportes.ver', 'reportes', 'Consultar reportes');

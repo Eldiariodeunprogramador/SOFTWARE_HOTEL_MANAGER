@@ -101,6 +101,17 @@ $tituloCabecera = 'Reservas';
                                                         href="<?= $baseUrl ?>/assets/modules/reservas/editar.php?id=<?= (int) $reservation['reserva_id'] ?>"
                                                     >Editar</a>
                                                 <?php endif; ?>
+                                                <?php if ($canEdit && $reservation['estado'] === 'Pendiente'): ?>
+                                                    <form
+                                                        action="<?= $baseUrl ?>/assets/modules/reservas/confirmar.php"
+                                                        method="post"
+                                                        onsubmit="return confirm('¿Deseas confirmar esta reserva?');"
+                                                    >
+                                                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
+                                                        <input type="hidden" name="reserva_id" value="<?= (int) $reservation['reserva_id'] ?>">
+                                                        <button class="boton-accion" type="submit">Confirmar</button>
+                                                    </form>
+                                                <?php endif; ?>
                                                 <?php if ($canCancel && !in_array($reservation['estado'], ['Cancelada', 'Finalizada'], true)): ?>
                                                     <form
                                                         action="<?= $baseUrl ?>/assets/modules/reservas/cancelar.php"

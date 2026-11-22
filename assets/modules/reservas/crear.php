@@ -25,7 +25,7 @@ $employees = $pdo->query(
      ORDER BY p.apellidos, p.nombres'
 )->fetchAll();
 $pendingStateStatement = $pdo->prepare(
-    'SELECT estado_reserva_id FROM estados_reservas WHERE nombre = :nombre LIMIT 1'
+    'SELECT estado_reserva_id FROM estados_reservas WHERE nombre = :nombre AND activo = 1 LIMIT 1'
 );
 $pendingStateStatement->execute(['nombre' => 'Pendiente']);
 $pendingStateId = $pendingStateStatement->fetchColumn();

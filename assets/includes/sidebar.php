@@ -1,16 +1,16 @@
 <?php
 $menuModuleLabels = [
     'huespedes' => 'Huéspedes',
-    'pagos' => 'Pagos',
     'reportes' => 'Reportes',
 ];
 $menuModuleIcons = [
     'huespedes' => 'fa-users',
-    'pagos' => 'fa-credit-card',
     'reportes' => 'fa-chart-column',
 ];
 $menuModules = array_values(array_intersect(array_keys($menuModuleLabels), user_modules($pdo)));
 $menuCanViewReservations = user_has_permission($pdo, 'reservas.ver');
+$menuCanViewPayments = user_has_permission($pdo, 'pagos.ver');
+$menuCanRegisterPayments = user_has_permission($pdo, 'pagos.registrar');
 $menuIsAdmin = user_has_role($pdo, 'Administrador');
 $menuCanViewRoles = user_has_permission($pdo, 'roles.ver');
 $menuBaseUrl = htmlspecialchars(HOTEL_BASE_URL, ENT_QUOTES, 'UTF-8');
@@ -30,6 +30,22 @@ $menuBaseUrl = htmlspecialchars(HOTEL_BASE_URL, ENT_QUOTES, 'UTF-8');
                     <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/reservas/index.php">
                         <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
                         <span>Reservas</span>
+                    </a>
+                </li>
+            <?php endif; ?>
+            <?php if ($menuCanViewPayments): ?>
+                <li>
+                    <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/pagos/index.php">
+                        <i class="fa-solid fa-credit-card" aria-hidden="true"></i>
+                        <span>Pagos</span>
+                    </a>
+                </li>
+            <?php endif; ?>
+            <?php if ($menuCanRegisterPayments): ?>
+                <li>
+                    <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/pagos/pagar_reserva.php">
+                        <i class="fa-solid fa-money-bill-transfer" aria-hidden="true"></i>
+                        <span>Pagar reserva</span>
                     </a>
                 </li>
             <?php endif; ?>
@@ -74,6 +90,12 @@ $menuBaseUrl = htmlspecialchars(HOTEL_BASE_URL, ENT_QUOTES, 'UTF-8');
                     <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/habitaciones/estados_habitaciones/index.php">
                         <i class="fa-solid fa-door-open" aria-hidden="true"></i>
                         <span>Estados de habitaciones</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/estados_reservas/index.php">
+                        <i class="fa-solid fa-list-check" aria-hidden="true"></i>
+                        <span>Estados de reservas</span>
                     </a>
                 </li>
                 <li>
