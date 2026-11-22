@@ -1,12 +1,22 @@
+<?php
+require_once __DIR__ . '/assets/includes/auth.php';
+
+if (is_authenticated()) {
+    redirect_to('/assets/modules/dashboard/index.php');
+}
+
+$loginError = $_SESSION['login_error'] ?? '';
+unset($_SESSION['login_error']);
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="assets/css/estilos.css">
     <link rel="shortcut icon" href="assets/img/logo.png" type="image/x-icon">
-    <title>Document</title>
+    <title>Inicio de sesión | Hotel Premium</title>
 </head>
 <body>
     <main class="principal">
@@ -31,13 +41,18 @@
         </footer>
     </main>
     <section class="formulario">
-        <form action="">
+        <form action="assets/modules/auth/login.php" method="post">
             <h3 class="formulario-titulo">BIENVENIDOS</h3>
             <p class="formulario-subtitulo"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> INICIO DE SESIÓN</p>
-            <input type="text" name="" id="" class="input-texto" placeholder="Ingresar el usuario">
-            <input type="password" name="" id="" class="input-password" placeholder="**********">
+            <?php if ($loginError !== ''): ?>
+                <p class="mensaje-error" role="alert"><?= htmlspecialchars($loginError, ENT_QUOTES, 'UTF-8') ?></p>
+            <?php endif; ?>
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
+            <label class="sr-only" for="identificador">Usuario o correo electrónico</label>
+            <input type="text" name="identificador" id="identificador" class="input-texto" placeholder="Usuario o correo electrónico" autocomplete="username" required>
+            <label class="sr-only" for="password">Contraseña</label>
+            <input type="password" name="password" id="password" class="input-password" placeholder="Contraseña" autocomplete="current-password" required>
             <input type="submit" value="INGRESAR" class="input-submit">
-            <a href="#" class="perdiste">¿Perdiste tu contraseña?</a>
         </form>
     </section>
 </body>
