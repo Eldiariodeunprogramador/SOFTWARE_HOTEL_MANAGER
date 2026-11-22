@@ -1,17 +1,16 @@
 <?php
 $menuModuleLabels = [
-    'reservas' => 'Reservas',
     'huespedes' => 'Huéspedes',
     'pagos' => 'Pagos',
     'reportes' => 'Reportes',
 ];
 $menuModuleIcons = [
-    'reservas' => 'fa-calendar-check',
     'huespedes' => 'fa-users',
     'pagos' => 'fa-credit-card',
     'reportes' => 'fa-chart-column',
 ];
 $menuModules = array_values(array_intersect(array_keys($menuModuleLabels), user_modules($pdo)));
+$menuCanViewReservations = user_has_permission($pdo, 'reservas.ver');
 $menuIsAdmin = user_has_role($pdo, 'Administrador');
 $menuCanViewRoles = user_has_permission($pdo, 'roles.ver');
 $menuBaseUrl = htmlspecialchars(HOTEL_BASE_URL, ENT_QUOTES, 'UTF-8');
@@ -26,6 +25,14 @@ $menuBaseUrl = htmlspecialchars(HOTEL_BASE_URL, ENT_QUOTES, 'UTF-8');
                     <span>Panel principal</span>
                 </a>
             </li>
+            <?php if ($menuCanViewReservations): ?>
+                <li>
+                    <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/reservas/index.php">
+                        <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
+                        <span>Reservas</span>
+                    </a>
+                </li>
+            <?php endif; ?>
             <?php foreach ($menuModules as $module): ?>
                 <li>
                     <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/<?= rawurlencode($module) ?>/index.php">
