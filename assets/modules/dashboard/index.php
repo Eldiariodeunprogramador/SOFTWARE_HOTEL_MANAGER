@@ -6,14 +6,12 @@ require_once __DIR__ . '/../../config/database.php';
 $modules = user_modules($pdo);
 $moduleLabels = [
     'reservas' => 'Reservas',
-    'habitaciones' => 'Habitaciones',
     'huespedes' => 'Huéspedes',
     'pagos' => 'Pagos',
     'reportes' => 'Reportes',
 ];
 $moduleIcons = [
     'reservas' => 'fa-calendar-check',
-    'habitaciones' => 'fa-bed',
     'huespedes' => 'fa-users',
     'pagos' => 'fa-credit-card',
     'reportes' => 'fa-chart-column',

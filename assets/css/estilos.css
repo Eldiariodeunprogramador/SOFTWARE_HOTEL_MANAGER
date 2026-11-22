@@ -379,6 +379,7 @@ body {
 .personas-cabecera,
 .clientes-cabecera,
 .empleados-cabecera,
+.habitaciones-cabecera,
 .roles-cabecera,
 .tipos-documentos-cabecera {
     display: flex;
@@ -392,6 +393,7 @@ body {
 .personas-cabecera p,
 .clientes-cabecera p,
 .empleados-cabecera p,
+.habitaciones-cabecera p,
 .roles-cabecera p,
 .tipos-documentos-cabecera p {
     margin-top: 8px;
@@ -451,6 +453,7 @@ body {
 .formulario-persona,
 .formulario-cliente,
 .formulario-empleado,
+.formulario-habitacion,
 .formulario-rol,
 .formulario-tipo-documento {
     display: grid;
@@ -462,6 +465,7 @@ body {
 .formulario-persona label,
 .formulario-cliente label,
 .formulario-empleado label,
+.formulario-habitacion label,
 .formulario-rol > label,
 .formulario-tipo-documento label {
     margin-top: 8px;
@@ -479,6 +483,9 @@ body {
 .formulario-empleado input,
 .formulario-empleado select,
 .formulario-empleado textarea,
+.formulario-habitacion input,
+.formulario-habitacion select,
+.formulario-habitacion textarea,
 .formulario-rol input:not([type="checkbox"]):not([type="hidden"]),
 .formulario-rol select,
 .formulario-rol textarea,
@@ -509,6 +516,9 @@ body {
 .formulario-empleado input:focus,
 .formulario-empleado select:focus,
 .formulario-empleado textarea:focus,
+.formulario-habitacion input:focus,
+.formulario-habitacion select:focus,
+.formulario-habitacion textarea:focus,
 .formulario-rol input:focus,
 .formulario-rol select:focus,
 .formulario-rol textarea:focus,
@@ -592,6 +602,7 @@ body {
 .formulario-persona .boton-accion,
 .formulario-cliente .boton-accion,
 .formulario-empleado .boton-accion,
+.formulario-habitacion .boton-accion,
 .formulario-rol .boton-accion,
 .formulario-tipo-documento .boton-accion {
     justify-self: start;
@@ -631,6 +642,7 @@ body {
 .tabla-personas,
 .tabla-clientes,
 .tabla-empleados,
+.tabla-habitaciones,
 .tabla-registros {
     width: 100%;
     border-collapse: collapse;
@@ -645,6 +657,8 @@ body {
 .tabla-clientes td,
 .tabla-empleados th,
 .tabla-empleados td,
+.tabla-habitaciones th,
+.tabla-habitaciones td,
 .tabla-registros th,
 .tabla-registros td {
     padding: 12px;
@@ -656,6 +670,7 @@ body {
 .tabla-personas th,
 .tabla-clientes th,
 .tabla-empleados th,
+.tabla-habitaciones th,
 .tabla-registros th {
     color: #173f3d;
     background: #f7fbfa;
@@ -665,6 +680,7 @@ body {
 .acciones-persona,
 .acciones-cliente,
 .acciones-empleado,
+.acciones-habitacion,
 .acciones-registro {
     display: flex;
     align-items: center;
@@ -675,6 +691,7 @@ body {
 .acciones-persona form,
 .acciones-cliente form,
 .acciones-empleado form,
+.acciones-habitacion form,
 .acciones-registro form {
     margin: 0;
 }
@@ -794,6 +811,7 @@ body {
     .personas-cabecera,
     .clientes-cabecera,
     .empleados-cabecera,
+    .habitaciones-cabecera,
     .roles-cabecera,
     .tipos-documentos-cabecera {
         align-items: flex-start;

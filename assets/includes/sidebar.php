@@ -1,14 +1,12 @@
 <?php
 $menuModuleLabels = [
     'reservas' => 'Reservas',
-    'habitaciones' => 'Habitaciones',
     'huespedes' => 'Huéspedes',
     'pagos' => 'Pagos',
     'reportes' => 'Reportes',
 ];
 $menuModuleIcons = [
     'reservas' => 'fa-calendar-check',
-    'habitaciones' => 'fa-bed',
     'huespedes' => 'fa-users',
     'pagos' => 'fa-credit-card',
     'reportes' => 'fa-chart-column',
@@ -53,6 +51,12 @@ $menuBaseUrl = htmlspecialchars(HOTEL_BASE_URL, ENT_QUOTES, 'UTF-8');
                 </li>
             <?php endif; ?>
             <?php if ($menuIsAdmin): ?>
+                <li>
+                    <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/habitaciones/index.php">
+                        <i class="fa-solid fa-bed" aria-hidden="true"></i>
+                        <span>Habitaciones</span>
+                    </a>
+                </li>
                 <li>
                     <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/personas/index.php">
                         <i class="fa-solid fa-address-card" aria-hidden="true"></i>
