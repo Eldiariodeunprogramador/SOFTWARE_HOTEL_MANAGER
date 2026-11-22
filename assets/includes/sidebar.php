@@ -58,6 +58,18 @@ $menuBaseUrl = htmlspecialchars(HOTEL_BASE_URL, ENT_QUOTES, 'UTF-8');
                     </a>
                 </li>
                 <li>
+                    <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/habitaciones/tipo_habitaciones/index.php">
+                        <i class="fa-solid fa-bed" aria-hidden="true"></i>
+                        <span>Tipos de habitaciones</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/habitaciones/estados_habitaciones/index.php">
+                        <i class="fa-solid fa-door-open" aria-hidden="true"></i>
+                        <span>Estados de habitaciones</span>
+                    </a>
+                </li>
+                <li>
                     <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/personas/index.php">
                         <i class="fa-solid fa-address-card" aria-hidden="true"></i>
                         <span>Personas</span>
