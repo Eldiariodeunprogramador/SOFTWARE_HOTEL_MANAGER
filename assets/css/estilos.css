@@ -376,7 +376,8 @@ body {
 }
 
 .usuarios-cabecera,
-.personas-cabecera {
+.personas-cabecera,
+.roles-cabecera {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -385,7 +386,8 @@ body {
 }
 
 .usuarios-cabecera p,
-.personas-cabecera p {
+.personas-cabecera p,
+.roles-cabecera p {
     margin-top: 8px;
     color: #555555;
 }
@@ -415,6 +417,12 @@ body {
     background: #2f756f;
 }
 
+.boton-accion:disabled,
+.boton-accion:disabled:hover {
+    background: #7d9693;
+    cursor: not-allowed;
+}
+
 .boton-secundario {
     color: #173f3d;
     background: #e8f5f2;
@@ -434,14 +442,16 @@ body {
 }
 
 .formulario-usuario,
-.formulario-persona {
+.formulario-persona,
+.formulario-rol {
     display: grid;
     max-width: 620px;
     gap: 10px;
 }
 
 .formulario-usuario label,
-.formulario-persona label {
+.formulario-persona label,
+.formulario-rol > label {
     margin-top: 8px;
     color: #173f3d;
     font-weight: 700;
@@ -450,7 +460,9 @@ body {
 .formulario-usuario input,
 .formulario-usuario select,
 .formulario-persona input,
-.formulario-persona select {
+.formulario-persona select,
+.formulario-rol input:not([type="checkbox"]):not([type="hidden"]),
+.formulario-rol textarea {
     width: 100%;
     min-height: 44px;
     padding: 10px 12px;
@@ -468,7 +480,9 @@ body {
 .formulario-usuario input:focus,
 .formulario-usuario select:focus,
 .formulario-persona input:focus,
-.formulario-persona select:focus {
+.formulario-persona select:focus,
+.formulario-rol input:focus,
+.formulario-rol textarea:focus {
     outline: 3px solid rgba(74, 166, 157, 0.25);
     border-color: #398e86;
 }
@@ -479,10 +493,62 @@ body {
     gap: 10px;
 }
 
-.formulario-usuario .casilla-usuario input {
+.formulario-usuario .casilla-usuario input,
+.formulario-rol .casilla-usuario input {
     width: 18px;
     min-height: 18px;
     margin: 0;
+}
+
+.formulario-rol .casilla-usuario {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.formulario-rol .casilla-usuario input {
+    flex: 0 0 18px;
+}
+
+.permisos-rol {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 10px;
+    padding: 16px;
+    border: 1px solid #b8cfcb;
+    border-radius: 8px;
+}
+
+.permisos-rol legend {
+    padding: 0 8px;
+    color: #173f3d;
+    font-weight: 700;
+}
+
+.casilla-permiso {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid #d5e6e3;
+    border-radius: 8px;
+}
+
+.casilla-permiso input {
+    flex: 0 0 18px;
+    width: 18px;
+    min-height: 18px;
+    margin: 2px 0 0;
+}
+
+.casilla-permiso span {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.casilla-permiso small {
+    color: #555555;
 }
 
 .ayuda-formulario {
@@ -491,7 +557,8 @@ body {
 }
 
 .formulario-usuario .boton-accion,
-.formulario-persona .boton-accion {
+.formulario-persona .boton-accion,
+.formulario-rol .boton-accion {
     justify-self: start;
     margin-top: 12px;
 }
@@ -512,8 +579,22 @@ body {
     overflow-x: auto;
 }
 
+.usuarios-registrados {
+    margin-top: 32px;
+}
+
+.usuarios-registrados h2 {
+    margin-bottom: 16px;
+    color: #173f3d;
+}
+
+.usuarios-registrados > .boton-secundario {
+    margin-top: 16px;
+}
+
 .tabla-usuarios,
-.tabla-personas {
+.tabla-personas,
+.tabla-registros {
     width: 100%;
     border-collapse: collapse;
     text-align: left;
@@ -522,27 +603,32 @@ body {
 .tabla-usuarios th,
 .tabla-usuarios td,
 .tabla-personas th,
-.tabla-personas td {
+.tabla-personas td,
+.tabla-registros th,
+.tabla-registros td {
     padding: 12px;
     border-bottom: 1px solid #d5e6e3;
     vertical-align: middle;
 }
 
 .tabla-usuarios th,
-.tabla-personas th {
+.tabla-personas th,
+.tabla-registros th {
     color: #173f3d;
     background: #f7fbfa;
 }
 
 .acciones-usuario,
-.acciones-persona {
+.acciones-persona,
+.acciones-registro {
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
 .acciones-usuario form,
-.acciones-persona form {
+.acciones-persona form,
+.acciones-registro form {
     margin: 0;
 }
 
@@ -658,7 +744,8 @@ body {
     }
 
     .usuarios-cabecera,
-    .personas-cabecera {
+    .personas-cabecera,
+    .roles-cabecera {
         align-items: flex-start;
         flex-direction: column;
     }

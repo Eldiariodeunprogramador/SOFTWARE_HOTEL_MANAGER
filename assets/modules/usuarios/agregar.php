@@ -6,6 +6,29 @@ require_once __DIR__ . '/helpers.php';
 require_role($pdo, 'Administrador');
 
 $roles = usuarios_roles_activos($pdo);
+$personsStatement = $pdo->query(
+    'SELECT p.persona_id, p.nombres, p.apellidos,
+            td.abreviatura, p.numero_documento
+     FROM personas p
+     INNER JOIN tipos_documentos td ON td.tipo_documento_id = p.tipo_documento_id
+     LEFT JOIN usuarios u ON u.persona_id = p.persona_id
+     WHERE u.usuario_id IS NULL
+     ORDER BY p.apellidos, p.nombres'
+);
+$personas = $personsStatement->fetchAll();
+$availablePersonaIds = array_map('intval', array_column($personas, 'persona_id'));
+$registeredUsersStatement = $pdo->query(
+    'SELECT u.usuario_id, u.nombre_usuario, u.email, u.activo,
+            p.nombres, p.apellidos,
+            GROUP_CONCAT(DISTINCT r.nombre ORDER BY r.nombre SEPARATOR \', \') AS roles
+     FROM usuarios u
+     INNER JOIN personas p ON p.persona_id = u.persona_id
+     LEFT JOIN usuario_rol ur ON ur.usuario_id = u.usuario_id
+     LEFT JOIN roles r ON r.rol_id = ur.rol_id
+     GROUP BY u.usuario_id, u.nombre_usuario, u.email, u.activo, p.nombres, p.apellidos
+     ORDER BY p.apellidos, p.nombres'
+);
+$registeredUsers = $registeredUsersStatement->fetchAll();
 $errorMessage = '';
 $personaIdInput = '';
 $username = '';
@@ -18,10 +41,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit('Solicitud inválida. Vuelve a cargar el formulario e inténtalo de nuevo.');
     }
 
-    $personaIdInput = trim((string) ($_POST['persona_id'] ?? ''));
-    $username = trim((string) ($_POST['nombre_usuario'] ?? ''));
-    $email = trim((string) ($_POST['email'] ?? ''));
-    $password = (string) ($_POST['password'] ?? '');
+    $personaInput = $_POST['persona_id'] ?? '';
+    $usernameInput = $_POST['nombre_usuario'] ?? '';
+    $emailInput = $_POST['email'] ?? '';
+    $passwordInput = $_POST['password'] ?? '';
+    $invalidInput = !is_string($personaInput) || !is_string($usernameInput)
+        || !is_string($emailInput) || !is_string($passwordInput);
+    $personaIdInput = is_string($personaInput) ? trim($personaInput) : '';
+    $username = is_string($usernameInput) ? trim($usernameInput) : '';
+    $email = is_string($emailInput) ? trim($emailInput) : '';
+    $password = is_string($passwordInput) ? $passwordInput : '';
     $selectedRoleIds = usuarios_parsear_roles($_POST['role_ids'] ?? []);
     $personaId = filter_var(
         $personaIdInput,
@@ -29,11 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ['options' => ['min_range' => 1]]
     );
 
-    if ($personaId === false || $username === '' || strlen($username) > 50
+    if ($invalidInput || $personaId === false
+        || !in_array((int) $personaId, $availablePersonaIds, true)
+        || $username === '' || strlen($username) > 50
         || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 100
         || strlen($password) < 12 || $selectedRoleIds === null
         || !usuarios_roles_validos($pdo, $selectedRoleIds)) {
-        $errorMessage = 'Verifica el ID de persona, el usuario, el correo, la contraseña (mínimo 12 caracteres) y los roles seleccionados.';
+        $errorMessage = 'Selecciona una persona disponible y verifica el usuario, el correo, la contraseña (mínimo 12 caracteres) y los roles.';
     } else {
         try {
             $pdo->beginTransaction();
@@ -64,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $pdo->rollBack();
             }
             error_log('Hotel Manager user creation failed: ' . $exception->getMessage());
-            $errorMessage = 'No se pudo agregar el usuario. Verifica que el ID de persona, el nombre de usuario y el correo sean válidos y no estén duplicados.';
+            $errorMessage = 'No se pudo agregar el usuario. Verifica que la persona no tenga ya una cuenta y que el nombre de usuario y el correo no estén duplicados.';
         }
     }
 }
@@ -96,10 +127,29 @@ $tituloCabecera = 'Agregar usuario';
                     <p class="mensaje-usuarios mensaje-error"><?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') ?></p>
                 <?php endif; ?>
 
+                <?php if ($personas === []): ?>
+                    <p class="mensaje-info">
+                        No hay personas disponibles para crear otra cuenta.
+                        <a href="<?= $baseUrl ?>/assets/modules/personas/agregar.php">Registra una persona</a> primero.
+                    </p>
+                <?php endif; ?>
+
                 <form class="formulario-usuario" method="post">
                     <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
-                    <label for="persona_id">ID de persona</label>
-                    <input id="persona_id" name="persona_id" type="number" min="1" required value="<?= htmlspecialchars($personaIdInput, ENT_QUOTES, 'UTF-8') ?>">
+                    <label for="persona_id">Persona</label>
+                    <select id="persona_id" name="persona_id" required <?= $personas === [] ? 'disabled' : '' ?>>
+                        <?php if ($personas === []): ?>
+                            <option value="">No hay personas disponibles</option>
+                        <?php else: ?>
+                            <option value="">Selecciona una persona</option>
+                            <?php foreach ($personas as $persona): ?>
+                                <option
+                                    value="<?= (int) $persona['persona_id'] ?>"
+                                    <?= (string) $persona['persona_id'] === $personaIdInput ? 'selected' : '' ?>
+                                ><?= htmlspecialchars($persona['nombres'] . ' ' . $persona['apellidos'] . ' - ' . $persona['abreviatura'] . ' ' . $persona['numero_documento'], ENT_QUOTES, 'UTF-8') ?></option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
 
                     <label for="nombre_usuario">Nombre de usuario</label>
                     <input id="nombre_usuario" name="nombre_usuario" type="text" maxlength="50" required value="<?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8') ?>">
@@ -121,8 +171,41 @@ $tituloCabecera = 'Agregar usuario';
                     </select>
                     <p class="ayuda-formulario">Mantén presionada Ctrl (Windows) o Cmd (Mac) para seleccionar varios roles.</p>
 
-                    <button class="boton-accion" type="submit">Guardar usuario</button>
+                    <button class="boton-accion" type="submit" <?= $personas === [] ? 'disabled' : '' ?>>Guardar usuario</button>
                 </form>
+
+                <section class="usuarios-registrados" aria-labelledby="usuarios-registrados-titulo">
+                    <h2 id="usuarios-registrados-titulo">Usuarios registrados</h2>
+                    <?php if ($registeredUsers === []): ?>
+                        <p class="mensaje-info">Todavía no hay usuarios registrados.</p>
+                    <?php else: ?>
+                        <div class="tabla-contenedor">
+                            <table class="tabla-usuarios">
+                                <thead>
+                                    <tr>
+                                        <th>Persona</th>
+                                        <th>Usuario</th>
+                                        <th>Correo</th>
+                                        <th>Rol(es)</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($registeredUsers as $registeredUser): ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($registeredUser['nombres'] . ' ' . $registeredUser['apellidos'], ENT_QUOTES, 'UTF-8') ?></td>
+                                            <td><?= htmlspecialchars($registeredUser['nombre_usuario'], ENT_QUOTES, 'UTF-8') ?></td>
+                                            <td><?= htmlspecialchars($registeredUser['email'], ENT_QUOTES, 'UTF-8') ?></td>
+                                            <td><?= htmlspecialchars($registeredUser['roles'] ?? 'Sin rol asignado', ENT_QUOTES, 'UTF-8') ?></td>
+                                            <td><?= (bool) $registeredUser['activo'] ? 'Activo' : 'Inactivo' ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
+                    <a class="boton-secundario" href="<?= $baseUrl ?>/assets/modules/usuarios/index.php">Administrar usuarios</a>
+                </section>
             </main>
         </div>
     </div>

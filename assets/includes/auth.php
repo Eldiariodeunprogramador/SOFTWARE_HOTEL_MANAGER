@@ -103,11 +103,8 @@ function require_role(PDO $pdo, string $roleName): void
     }
 }
 
-function require_permission(string $permission): void
+function user_has_permission(PDO $pdo, string $permission): bool
 {
-    require_login();
-
-    require_once __DIR__ . '/../config/database.php';
     $statement = $pdo->prepare(
         'SELECT 1
          FROM usuario_rol ur
@@ -122,7 +119,16 @@ function require_permission(string $permission): void
         'permiso' => $permission,
     ]);
 
-    if (!$statement->fetchColumn()) {
+    return (bool) $statement->fetchColumn();
+}
+
+function require_permission(string $permission): void
+{
+    require_login();
+
+    global $pdo;
+    require_once __DIR__ . '/../config/database.php';
+    if (!user_has_permission($pdo, $permission)) {
         http_response_code(403);
         echo '<!DOCTYPE html><html lang="es"><meta charset="UTF-8"><title>Acceso denegado</title>'
             . '<body><h1>Acceso denegado</h1><p>Tu rol no tiene permiso para ver este módulo.</p>'
