@@ -60,6 +60,12 @@ $menuBaseUrl = htmlspecialchars(HOTEL_BASE_URL, ENT_QUOTES, 'UTF-8');
                     </a>
                 </li>
                 <li>
+                    <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/empleados/index.php">
+                        <i class="fa-solid fa-user-tie" aria-hidden="true"></i>
+                        <span>Empleados</span>
+                    </a>
+                </li>
+                <li>
                     <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/clientes/index.php">
                         <i class="fa-solid fa-user-tag" aria-hidden="true"></i>
                         <span>Clientes</span>
