@@ -377,6 +377,7 @@ body {
 
 .usuarios-cabecera,
 .personas-cabecera,
+.clientes-cabecera,
 .roles-cabecera,
 .tipos-documentos-cabecera {
     display: flex;
@@ -388,6 +389,7 @@ body {
 
 .usuarios-cabecera p,
 .personas-cabecera p,
+.clientes-cabecera p,
 .roles-cabecera p,
 .tipos-documentos-cabecera p {
     margin-top: 8px;
@@ -445,6 +447,7 @@ body {
 
 .formulario-usuario,
 .formulario-persona,
+.formulario-cliente,
 .formulario-rol,
 .formulario-tipo-documento {
     display: grid;
@@ -454,6 +457,7 @@ body {
 
 .formulario-usuario label,
 .formulario-persona label,
+.formulario-cliente label,
 .formulario-rol > label,
 .formulario-tipo-documento label {
     margin-top: 8px;
@@ -465,6 +469,9 @@ body {
 .formulario-usuario select,
 .formulario-persona input,
 .formulario-persona select,
+.formulario-cliente input,
+.formulario-cliente select,
+.formulario-cliente textarea,
 .formulario-rol input:not([type="checkbox"]):not([type="hidden"]),
 .formulario-rol select,
 .formulario-rol textarea,
@@ -489,6 +496,9 @@ body {
 .formulario-usuario select:focus,
 .formulario-persona input:focus,
 .formulario-persona select:focus,
+.formulario-cliente input:focus,
+.formulario-cliente select:focus,
+.formulario-cliente textarea:focus,
 .formulario-rol input:focus,
 .formulario-rol select:focus,
 .formulario-rol textarea:focus,
@@ -570,6 +580,7 @@ body {
 
 .formulario-usuario .boton-accion,
 .formulario-persona .boton-accion,
+.formulario-cliente .boton-accion,
 .formulario-rol .boton-accion,
 .formulario-tipo-documento .boton-accion {
     justify-self: start;
@@ -607,6 +618,7 @@ body {
 
 .tabla-usuarios,
 .tabla-personas,
+.tabla-clientes,
 .tabla-registros {
     width: 100%;
     border-collapse: collapse;
@@ -617,6 +629,8 @@ body {
 .tabla-usuarios td,
 .tabla-personas th,
 .tabla-personas td,
+.tabla-clientes th,
+.tabla-clientes td,
 .tabla-registros th,
 .tabla-registros td {
     padding: 12px;
@@ -626,6 +640,7 @@ body {
 
 .tabla-usuarios th,
 .tabla-personas th,
+.tabla-clientes th,
 .tabla-registros th {
     color: #173f3d;
     background: #f7fbfa;
@@ -633,6 +648,7 @@ body {
 
 .acciones-usuario,
 .acciones-persona,
+.acciones-cliente,
 .acciones-registro {
     display: flex;
     align-items: center;
@@ -641,6 +657,7 @@ body {
 
 .acciones-usuario form,
 .acciones-persona form,
+.acciones-cliente form,
 .acciones-registro form {
     margin: 0;
 }
@@ -758,6 +775,7 @@ body {
 
     .usuarios-cabecera,
     .personas-cabecera,
+    .clientes-cabecera,
     .roles-cabecera,
     .tipos-documentos-cabecera {
         align-items: flex-start;
