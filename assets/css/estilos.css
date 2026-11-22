@@ -377,7 +377,8 @@ body {
 
 .usuarios-cabecera,
 .personas-cabecera,
-.roles-cabecera {
+.roles-cabecera,
+.tipos-documentos-cabecera {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -387,7 +388,8 @@ body {
 
 .usuarios-cabecera p,
 .personas-cabecera p,
-.roles-cabecera p {
+.roles-cabecera p,
+.tipos-documentos-cabecera p {
     margin-top: 8px;
     color: #555555;
 }
@@ -443,7 +445,8 @@ body {
 
 .formulario-usuario,
 .formulario-persona,
-.formulario-rol {
+.formulario-rol,
+.formulario-tipo-documento {
     display: grid;
     max-width: 620px;
     gap: 10px;
@@ -451,7 +454,8 @@ body {
 
 .formulario-usuario label,
 .formulario-persona label,
-.formulario-rol > label {
+.formulario-rol > label,
+.formulario-tipo-documento label {
     margin-top: 8px;
     color: #173f3d;
     font-weight: 700;
@@ -462,7 +466,11 @@ body {
 .formulario-persona input,
 .formulario-persona select,
 .formulario-rol input:not([type="checkbox"]):not([type="hidden"]),
-.formulario-rol textarea {
+.formulario-rol select,
+.formulario-rol textarea,
+.formulario-tipo-documento input,
+.formulario-tipo-documento select,
+.formulario-tipo-documento textarea {
     width: 100%;
     min-height: 44px;
     padding: 10px 12px;
@@ -482,7 +490,11 @@ body {
 .formulario-persona input:focus,
 .formulario-persona select:focus,
 .formulario-rol input:focus,
-.formulario-rol textarea:focus {
+.formulario-rol select:focus,
+.formulario-rol textarea:focus,
+.formulario-tipo-documento input:focus,
+.formulario-tipo-documento select:focus,
+.formulario-tipo-documento textarea:focus {
     outline: 3px solid rgba(74, 166, 157, 0.25);
     border-color: #398e86;
 }
@@ -558,7 +570,8 @@ body {
 
 .formulario-usuario .boton-accion,
 .formulario-persona .boton-accion,
-.formulario-rol .boton-accion {
+.formulario-rol .boton-accion,
+.formulario-tipo-documento .boton-accion {
     justify-self: start;
     margin-top: 12px;
 }
@@ -745,7 +758,8 @@ body {
 
     .usuarios-cabecera,
     .personas-cabecera,
-    .roles-cabecera {
+    .roles-cabecera,
+    .tipos-documentos-cabecera {
         align-items: flex-start;
         flex-direction: column;
     }

@@ -43,18 +43,26 @@ $menuBaseUrl = htmlspecialchars(HOTEL_BASE_URL, ENT_QUOTES, 'UTF-8');
                         <span>Usuarios</span>
                     </a>
                 </li>
-                <li>
-                    <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/personas/index.php">
-                        <i class="fa-solid fa-address-card" aria-hidden="true"></i>
-                        <span>Personas</span>
-                    </a>
-                </li>
             <?php endif; ?>
             <?php if ($menuCanViewRoles): ?>
                 <li>
                     <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/roles/index.php">
                         <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
                         <span>Roles</span>
+                    </a>
+                </li>
+            <?php endif; ?>
+            <?php if ($menuIsAdmin): ?>
+                <li>
+                    <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/personas/index.php">
+                        <i class="fa-solid fa-address-card" aria-hidden="true"></i>
+                        <span>Personas</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/tipos_documentos/index.php">
+                        <i class="fa-solid fa-id-card" aria-hidden="true"></i>
+                        <span>Tipos de documentos</span>
                     </a>
                 </li>
             <?php endif; ?>
