@@ -72,6 +72,37 @@ function user_modules(PDO $pdo): array
     return array_column($statement->fetchAll(), 'modulo');
 }
 
+function user_has_role(PDO $pdo, string $roleName): bool
+{
+    $statement = $pdo->prepare(
+        'SELECT 1
+         FROM usuario_rol ur
+         INNER JOIN roles r ON r.rol_id = ur.rol_id AND r.activo = 1
+         WHERE ur.usuario_id = :usuario_id AND r.nombre = :nombre
+         LIMIT 1'
+    );
+    $statement->execute([
+        'usuario_id' => $_SESSION['usuario_id'],
+        'nombre' => $roleName,
+    ]);
+
+    return (bool) $statement->fetchColumn();
+}
+
+function require_role(PDO $pdo, string $roleName): void
+{
+    require_login();
+
+    if (!user_has_role($pdo, $roleName)) {
+        http_response_code(403);
+        echo '<!DOCTYPE html><html lang="es"><meta charset="UTF-8"><title>Acceso denegado</title>'
+            . '<body><h1>Acceso denegado</h1><p>Tu rol no tiene permiso para realizar esta acción.</p>'
+            . '<a href="' . htmlspecialchars(HOTEL_BASE_URL . '/assets/modules/dashboard/index.php', ENT_QUOTES, 'UTF-8')
+            . '">Volver al panel</a></body></html>';
+        exit;
+    }
+}
+
 function require_permission(string $permission): void
 {
     require_login();
