@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 $pdo->beginTransaction();
                 $reservationLockStatement = $pdo->prepare(
-                    'SELECT r.reserva_id, er.nombre AS estado_reserva
+                    'SELECT r.reserva_id, r.habitacion_id, er.nombre AS estado_reserva
                      FROM reservas r
                      INNER JOIN estados_reservas er ON er.estado_reserva_id = r.estado_reserva_id
                      WHERE r.reserva_id = :reserva_id
@@ -141,23 +141,99 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 $pdo->rollBack();
                                 $errorMessage = 'La reserva no tiene saldo pendiente para pagar.';
                             } else {
-                                $insertStatement = $pdo->prepare(
-                                    'INSERT INTO pagos
-                                        (reserva_id, metodo_pago_id, estado_pago_id, monto, referencia, observaciones)
-                                     VALUES
-                                        (:reserva_id, :metodo_pago_id, :estado_pago_id, :monto, :referencia, :observaciones)'
+                                $roomStateStatement = $pdo->prepare(
+                                    'SELECT h.habitacion_id, eh.nombre AS estado
+                                     FROM habitaciones h
+                                     INNER JOIN estados_habitaciones eh
+                                         ON eh.estado_habitacion_id = h.estado_habitacion_id
+                                     WHERE h.habitacion_id = :habitacion_id
+                                     FOR UPDATE'
                                 );
-                                $insertStatement->execute([
-                                    'reserva_id' => $reservationId,
-                                    'metodo_pago_id' => $methodId,
-                                    'estado_pago_id' => $paidStateId,
-                                    'monto' => $balance,
-                                    'referencia' => $reference !== '' ? $reference : null,
-                                    'observaciones' => $observations !== '' ? $observations : null,
+                                $roomStateStatement->execute([
+                                    'habitacion_id' => $lockedReservation['habitacion_id'],
                                 ]);
-                                $pdo->commit();
-                                $_SESSION['pagos_mensaje'] = 'El pago se registró y confirmó correctamente.';
-                                redirect_to('/assets/modules/pagos/pagar_reserva.php?id=' . (int) $reservationId);
+                                $roomState = $roomStateStatement->fetch();
+                                $availableStateId = null;
+                                $hasOtherActiveStay = false;
+                                if (!$roomState) {
+                                    $pdo->rollBack();
+                                    $errorMessage = 'No se encontró la habitación asociada a la reserva.';
+                                } elseif ($roomState['estado'] === 'Ocupada') {
+                                    $otherStayStatement = $pdo->prepare(
+                                        'SELECT COUNT(*)
+                                         FROM reservas r
+                                         INNER JOIN estados_reservas er
+                                             ON er.estado_reserva_id = r.estado_reserva_id
+                                         WHERE r.habitacion_id = :habitacion_id
+                                           AND r.reserva_id <> :reserva_id
+                                           AND er.nombre NOT IN (:estado_cancelado, :estado_finalizado)
+                                           AND r.fecha_entrada <= CURRENT_DATE()
+                                           AND r.fecha_salida > CURRENT_DATE()'
+                                    );
+                                    $otherStayStatement->execute([
+                                        'habitacion_id' => $lockedReservation['habitacion_id'],
+                                        'reserva_id' => $reservationId,
+                                        'estado_cancelado' => 'Cancelada',
+                                        'estado_finalizado' => 'Finalizada',
+                                    ]);
+                                    $hasOtherActiveStay = (int) $otherStayStatement->fetchColumn() > 0;
+                                    if (!$hasOtherActiveStay) {
+                                        $availableStateStatement = $pdo->prepare(
+                                            'SELECT estado_habitacion_id
+                                             FROM estados_habitaciones
+                                             WHERE nombre = :nombre
+                                             LIMIT 1
+                                             FOR UPDATE'
+                                        );
+                                        $availableStateStatement->execute(['nombre' => 'Disponible']);
+                                        $availableStateId = $availableStateStatement->fetchColumn();
+                                        if (!$availableStateId) {
+                                            $pdo->rollBack();
+                                            $errorMessage = 'No existe el estado Disponible para liberar la habitación.';
+                                        }
+                                    }
+                                }
+
+                                if ($errorMessage === '') {
+                                    $insertStatement = $pdo->prepare(
+                                        'INSERT INTO pagos
+                                            (reserva_id, metodo_pago_id, estado_pago_id, monto, referencia, observaciones)
+                                         VALUES
+                                            (:reserva_id, :metodo_pago_id, :estado_pago_id, :monto, :referencia, :observaciones)'
+                                    );
+                                    $insertStatement->execute([
+                                        'reserva_id' => $reservationId,
+                                        'metodo_pago_id' => $methodId,
+                                        'estado_pago_id' => $paidStateId,
+                                        'monto' => $balance,
+                                        'referencia' => $reference !== '' ? $reference : null,
+                                        'observaciones' => $observations !== '' ? $observations : null,
+                                    ]);
+
+                                    $roomReleased = false;
+                                    if ($availableStateId) {
+                                        $releaseRoomStatement = $pdo->prepare(
+                                            'UPDATE habitaciones
+                                             SET estado_habitacion_id = :estado_habitacion_disponible
+                                             WHERE habitacion_id = :habitacion_id'
+                                        );
+                                        $releaseRoomStatement->execute([
+                                            'estado_habitacion_disponible' => $availableStateId,
+                                            'habitacion_id' => $lockedReservation['habitacion_id'],
+                                        ]);
+                                        $roomReleased = true;
+                                    }
+
+                                    $pdo->commit();
+                                    if ($roomReleased) {
+                                        $_SESSION['pagos_mensaje'] = 'El pago se registró y confirmó; la habitación quedó disponible.';
+                                    } elseif ($hasOtherActiveStay) {
+                                        $_SESSION['pagos_mensaje'] = 'El pago se registró y confirmó; la habitación sigue ocupada por otra reserva activa.';
+                                    } else {
+                                        $_SESSION['pagos_mensaje'] = 'El pago se registró y confirmó correctamente.';
+                                    }
+                                    redirect_to('/assets/modules/pagos/pagar_reserva.php?id=' . (int) $reservationId);
+                                }
                             }
                         }
                     }

@@ -3,7 +3,8 @@ require_once __DIR__ . '/../../includes/auth.php';
 require_permission('pagos.ver');
 require_once __DIR__ . '/../../config/database.php';
 
-$statement = $pdo->query(
+$canSeeAllPayments = user_has_role($pdo, 'Administrador') || user_has_role($pdo, 'Empleado');
+$paymentSql =
     'SELECT p.pago_id, p.monto, p.fecha_pago, p.referencia, p.observaciones,
             p.reserva_id, r.fecha_entrada, r.fecha_salida,
             CONCAT(persona.nombres, \' \', persona.apellidos) AS cliente,
@@ -16,9 +17,20 @@ $statement = $pdo->query(
      INNER JOIN personas persona ON persona.persona_id = c.persona_id
      INNER JOIN habitaciones h ON h.habitacion_id = r.habitacion_id
      INNER JOIN metodos_pagos mp ON mp.metodo_pago_id = p.metodo_pago_id
-     INNER JOIN estados_pagos ep ON ep.estado_pago_id = p.estado_pago_id
-     ORDER BY p.fecha_pago DESC, p.pago_id DESC'
-);
+     INNER JOIN estados_pagos ep ON ep.estado_pago_id = p.estado_pago_id';
+if (!$canSeeAllPayments) {
+    $paymentSql .=
+        ' WHERE c.persona_id = (
+            SELECT persona_id FROM usuarios WHERE usuario_id = :usuario_id
+        )';
+}
+$paymentSql .= ' ORDER BY p.fecha_pago DESC, p.pago_id DESC';
+$statement = $canSeeAllPayments
+    ? $pdo->query($paymentSql)
+    : $pdo->prepare($paymentSql);
+if (!$canSeeAllPayments) {
+    $statement->execute(['usuario_id' => $_SESSION['usuario_id']]);
+}
 $payments = $statement->fetchAll();
 $successMessage = $_SESSION['pagos_mensaje'] ?? '';
 $errorMessage = $_SESSION['pagos_error'] ?? '';
@@ -97,6 +109,15 @@ $tituloCabecera = 'Pagos';
                                         <td><?= htmlspecialchars($payment['estado_pago'], ENT_QUOTES, 'UTF-8') ?></td>
                                         <td><?= htmlspecialchars($payment['observaciones'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                                         <td>
+                                            <?php if ($payment['estado_pago'] === 'Pagado'): ?>
+                                                <a
+                                                    class="boton-secundario"
+                                                    href="<?= $baseUrl ?>/assets/modules/pagos/factura.php?id=<?= (int) $payment['pago_id'] ?>"
+                                                >
+                                                    <i class="fa-solid fa-file-pdf" aria-hidden="true"></i>
+                                                    PDF
+                                                </a>
+                                            <?php endif; ?>
                                             <?php if ($canCancel && $payment['estado_pago'] === 'Pendiente'): ?>
                                                 <form
                                                     action="<?= $baseUrl ?>/assets/modules/pagos/cancelar.php"

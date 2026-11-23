@@ -99,6 +99,12 @@ $menuBaseUrl = htmlspecialchars(HOTEL_BASE_URL, ENT_QUOTES, 'UTF-8');
                     </a>
                 </li>
                 <li>
+                    <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/estados_pagos/index.php">
+                        <i class="fa-solid fa-credit-card" aria-hidden="true"></i>
+                        <span>Estados de pagos</span>
+                    </a>
+                </li>
+                <li>
                     <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/personas/index.php">
                         <i class="fa-solid fa-address-card" aria-hidden="true"></i>
                         <span>Personas</span>
