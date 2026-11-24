@@ -12,6 +12,8 @@ $menuCanViewReservations = user_has_permission($pdo, 'reservas.ver');
 $menuCanViewPayments = user_has_permission($pdo, 'pagos.ver');
 $menuCanRegisterPayments = user_has_permission($pdo, 'pagos.registrar');
 $menuIsAdmin = user_has_role($pdo, 'Administrador');
+$menuIsEmployee = user_has_role($pdo, 'Empleado');
+$menuIsCustomer = user_has_role($pdo, 'Cliente') && !$menuIsAdmin && !$menuIsEmployee;
 $menuCanViewRoles = user_has_permission($pdo, 'roles.ver');
 $menuBaseUrl = htmlspecialchars(HOTEL_BASE_URL, ENT_QUOTES, 'UTF-8');
 ?>
@@ -25,11 +27,11 @@ $menuBaseUrl = htmlspecialchars(HOTEL_BASE_URL, ENT_QUOTES, 'UTF-8');
                     <span>Panel principal</span>
                 </a>
             </li>
-            <?php if ($menuCanViewReservations): ?>
+            <?php if ($menuCanViewReservations || $menuIsCustomer): ?>
                 <li>
-                    <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/reservas/index.php">
+                    <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/reservas/<?= $menuIsCustomer ? 'mis_reservas.php' : 'index.php' ?>">
                         <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
-                        <span>Reservas</span>
+                        <span><?= $menuIsCustomer ? 'Mis reservas' : 'Reservas' ?></span>
                     </a>
                 </li>
             <?php endif; ?>

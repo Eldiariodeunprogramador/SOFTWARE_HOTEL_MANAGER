@@ -3,6 +3,12 @@ require_once __DIR__ . '/../../includes/auth.php';
 require_permission('reservas.cancelar');
 require_once __DIR__ . '/../../config/database.php';
 
+$canManageAll = user_has_role($pdo, 'Administrador') || user_has_role($pdo, 'Empleado');
+$isCustomer = user_has_role($pdo, 'Cliente') && !$canManageAll;
+$returnPath = $isCustomer
+    ? '/assets/modules/reservas/mis_reservas.php'
+    : '/assets/modules/reservas/index.php';
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_token'] ?? null)) {
     http_response_code(400);
     exit('Solicitud inválida.');
@@ -31,32 +37,49 @@ try {
     if (!$cancelledStateId) {
         $pdo->rollBack();
         $_SESSION['reservas_error'] = 'No existe el estado Cancelada. Verifica los estados de reserva configurados.';
-        redirect_to('/assets/modules/reservas/index.php');
+        redirect_to($returnPath);
+
     }
 
-    $reservationStatement = $pdo->prepare(
+    $reservationSql =
         'SELECT r.reserva_id, er.nombre AS estado
          FROM reservas r
+         INNER JOIN clientes c ON c.cliente_id = r.cliente_id
          INNER JOIN estados_reservas er ON er.estado_reserva_id = r.estado_reserva_id
-         WHERE r.reserva_id = :reserva_id
-         FOR UPDATE'
-    );
-    $reservationStatement->execute(['reserva_id' => $reservationId]);
+         WHERE r.reserva_id = :reserva_id';
+    if (!$canManageAll) {
+        $reservationSql .=
+            ' AND c.persona_id = (
+                SELECT persona_id FROM usuarios WHERE usuario_id = :usuario_id
+            )';
+    }
+    $reservationSql .= ' FOR UPDATE';
+    $reservationStatement = $pdo->prepare($reservationSql);
+    $reservationParameters = ['reserva_id' => $reservationId];
+    if (!$canManageAll) {
+        $reservationParameters['usuario_id'] = $_SESSION['usuario_id'];
+    }
+    $reservationStatement->execute($reservationParameters);
     $reservation = $reservationStatement->fetch();
     if (!$reservation) {
         $pdo->rollBack();
         $_SESSION['reservas_error'] = 'La reserva no existe o ya fue eliminada.';
-        redirect_to('/assets/modules/reservas/index.php');
+        redirect_to($returnPath);
     }
     if ($reservation['estado'] === 'Cancelada') {
         $pdo->rollBack();
         $_SESSION['reservas_error'] = 'La reserva ya está cancelada.';
-        redirect_to('/assets/modules/reservas/index.php');
+        redirect_to($returnPath);
     }
     if ($reservation['estado'] === 'Finalizada') {
         $pdo->rollBack();
         $_SESSION['reservas_error'] = 'No se puede cancelar una reserva finalizada.';
-        redirect_to('/assets/modules/reservas/index.php');
+        redirect_to($returnPath);
+    }
+    if ($isCustomer && $reservation['estado'] !== 'Pendiente') {
+        $pdo->rollBack();
+        $_SESSION['reservas_error'] = 'Solo puedes cancelar solicitudes de reserva pendientes.';
+        redirect_to($returnPath);
     }
 
     $updateStatement = $pdo->prepare(
@@ -78,4 +101,4 @@ try {
     $_SESSION['reservas_error'] = 'No se pudo cancelar la reserva. Inténtalo de nuevo o contacta al administrador.';
 }
 
-redirect_to('/assets/modules/reservas/index.php');
+redirect_to($returnPath);

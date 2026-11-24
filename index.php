@@ -53,6 +53,7 @@ unset($_SESSION['login_error']);
             <label class="sr-only" for="password">Contraseña</label>
             <input type="password" name="password" id="password" class="input-password" placeholder="Contraseña" autocomplete="current-password" required>
             <input type="submit" value="INGRESAR" class="input-submit">
+            <a class="perdiste" href="assets/modules/auth/registrar.php">¿No tienes cuenta? Regístrate para reservar</a>
         </form>
     </section>
 </body>

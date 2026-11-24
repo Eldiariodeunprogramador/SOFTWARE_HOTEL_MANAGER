@@ -3,6 +3,16 @@ require_once __DIR__ . '/../../includes/auth.php';
 require_permission('reservas.crear');
 require_once __DIR__ . '/../../config/database.php';
 
+$canManageReservations = user_has_role($pdo, 'Administrador') || user_has_role($pdo, 'Empleado');
+if (!$canManageReservations) {
+    if (user_has_role($pdo, 'Cliente')) {
+        redirect_to('/assets/modules/reservas/mis_reservas.php');
+    }
+
+    http_response_code(403);
+    exit('Tu rol no puede crear reservas para otros clientes.');
+}
+
 $clients = $pdo->query(
     'SELECT c.cliente_id, p.nombres, p.apellidos
      FROM clientes c

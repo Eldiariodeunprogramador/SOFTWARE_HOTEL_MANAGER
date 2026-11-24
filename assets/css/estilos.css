@@ -142,6 +142,19 @@ body {
     box-shadow: 0 18px 50px rgba(0, 0, 0, 0.24);
 }
 
+.formulario form.formulario-registro {
+    width: min(460px, 100%);
+    max-height: calc(100vh - 40px);
+    gap: 10px;
+    padding: 28px;
+    overflow-y: auto;
+}
+
+.formulario-registro label {
+    color: #173f3d;
+    font-weight: 700;
+}
+
 .formulario-titulo {
     width: 100%;
     color: #173f3d;
@@ -720,6 +733,77 @@ body {
     gap: 16px;
 }
 
+.dashboard-resumen {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.dashboard-indicador {
+    display: flex;
+    min-height: 112px;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    border: 1px solid #d5e6e3;
+    border-radius: 12px;
+    background: #f7fbfa;
+}
+
+.dashboard-indicador > i {
+    color: #398e86;
+    font-size: 30px;
+}
+
+.dashboard-indicador h3 {
+    margin-bottom: 6px;
+    color: #555555;
+    font-size: 15px;
+}
+
+.dashboard-indicador p {
+    color: #173f3d;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.estado-habitacion-disponible {
+    border-color: #b8bfc1;
+    background: #e5e7e8;
+}
+
+.estado-habitacion-disponible > i {
+    color: #6b7477;
+}
+
+.estado-habitacion-limpieza {
+    border-color: #e7c85c;
+    background: #fff3b8;
+}
+
+.estado-habitacion-limpieza > i {
+    color: #b88b00;
+}
+
+.estado-habitacion-mantenimiento {
+    border-color: #dc9b9b;
+    background: #f5cccc;
+}
+
+.estado-habitacion-mantenimiento > i {
+    color: #b42323;
+}
+
+.estado-habitacion-ocupada {
+    border-color: #8fb4df;
+    background: #cfe4f8;
+}
+
+.estado-habitacion-ocupada > i {
+    color: #245da8;
+}
+
 .modulo {
     display: flex;
     min-height: 120px;
@@ -768,6 +852,10 @@ body {
         padding: 30px 20px;
     }
 
+    .formulario form.formulario-registro {
+        max-height: none;
+    }
+
     .panel {
         padding: 20px;
     }
@@ -794,6 +882,10 @@ body {
     .panel-contenido {
         padding: 24px;
         width: 100%;
+    }
+
+    .dashboard-resumen {
+        grid-template-columns: 1fr;
     }
 
     .panel-cabecera {

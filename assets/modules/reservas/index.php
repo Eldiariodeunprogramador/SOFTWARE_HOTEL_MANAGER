@@ -3,7 +3,9 @@ require_once __DIR__ . '/../../includes/auth.php';
 require_permission('reservas.ver');
 require_once __DIR__ . '/../../config/database.php';
 
-$statement = $pdo->query(
+$canManageAll = user_has_role($pdo, 'Administrador') || user_has_role($pdo, 'Empleado');
+$isCustomer = user_has_role($pdo, 'Cliente') && !$canManageAll;
+$reservationSql =
     'SELECT r.reserva_id, r.fecha_reserva, r.fecha_entrada, r.fecha_salida,
             r.numero_huespedes, r.precio_noche, r.observaciones,
             CONCAT(pc.nombres, \' \', pc.apellidos) AS cliente,
@@ -17,8 +19,18 @@ $statement = $pdo->query(
      INNER JOIN estados_reservas er ON er.estado_reserva_id = r.estado_reserva_id
      LEFT JOIN empleados e ON e.empleado_id = r.empleado_id
      LEFT JOIN personas pe ON pe.persona_id = e.persona_id
-     ORDER BY r.fecha_entrada DESC, r.reserva_id DESC'
-);
+     ';
+if (!$canManageAll) {
+    $reservationSql .=
+        'WHERE c.persona_id = (
+            SELECT persona_id FROM usuarios WHERE usuario_id = :usuario_id
+        ) ';
+}
+$reservationSql .= 'ORDER BY r.fecha_entrada DESC, r.reserva_id DESC';
+$statement = $canManageAll ? $pdo->query($reservationSql) : $pdo->prepare($reservationSql);
+if (!$canManageAll) {
+    $statement->execute(['usuario_id' => $_SESSION['usuario_id']]);
+}
 $reservations = $statement->fetchAll();
 $successMessage = $_SESSION['reservas_mensaje'] ?? '';
 $errorMessage = $_SESSION['reservas_error'] ?? '';
@@ -48,9 +60,9 @@ $tituloCabecera = 'Reservas';
                 <header class="habitaciones-cabecera">
                     <p>Consulta y administra las reservas, clientes y habitaciones.</p>
                     <?php if ($canCreate): ?>
-                        <a class="boton-accion" href="<?= $baseUrl ?>/assets/modules/reservas/crear.php">
+                        <a class="boton-accion" href="<?= $baseUrl ?>/assets/modules/reservas/<?= $isCustomer ? 'mis_reservas.php' : 'crear.php' ?>">
                             <i class="fa-solid fa-plus" aria-hidden="true"></i>
-                            Crear reserva
+                            <?= $isCustomer ? 'Solicitar reserva' : 'Crear reserva' ?>
                         </a>
                     <?php endif; ?>
                 </header>
@@ -112,7 +124,8 @@ $tituloCabecera = 'Reservas';
                                                         <button class="boton-accion" type="submit">Confirmar</button>
                                                     </form>
                                                 <?php endif; ?>
-                                                <?php if ($canCancel && !in_array($reservation['estado'], ['Cancelada', 'Finalizada'], true)): ?>
+                                                <?php if ($canCancel && !in_array($reservation['estado'], ['Cancelada', 'Finalizada'], true)
+                                                    && ($canManageAll || $reservation['estado'] === 'Pendiente')): ?>
                                                     <form
                                                         action="<?= $baseUrl ?>/assets/modules/reservas/cancelar.php"
                                                         method="post"
