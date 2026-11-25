@@ -1,11 +1,9 @@
 <?php
 $menuModuleLabels = [
     'huespedes' => 'Huéspedes',
-    'reportes' => 'Reportes',
 ];
 $menuModuleIcons = [
     'huespedes' => 'fa-users',
-    'reportes' => 'fa-chart-column',
 ];
 $menuModules = array_values(array_intersect(array_keys($menuModuleLabels), user_modules($pdo)));
 $menuCanViewReservations = user_has_permission($pdo, 'reservas.ver');
@@ -13,6 +11,8 @@ $menuCanViewPayments = user_has_permission($pdo, 'pagos.ver');
 $menuCanRegisterPayments = user_has_permission($pdo, 'pagos.registrar');
 $menuIsAdmin = user_has_role($pdo, 'Administrador');
 $menuIsEmployee = user_has_role($pdo, 'Empleado');
+$menuIsSupervisor = user_has_role($pdo, 'Supervisor');
+$menuCanViewReports = $menuIsAdmin || $menuIsSupervisor || $menuIsEmployee;
 $menuIsCustomer = user_has_role($pdo, 'Cliente') && !$menuIsAdmin && !$menuIsEmployee;
 $menuCanViewRoles = user_has_permission($pdo, 'roles.ver');
 $menuBaseUrl = htmlspecialchars(HOTEL_BASE_URL, ENT_QUOTES, 'UTF-8');
@@ -48,6 +48,14 @@ $menuBaseUrl = htmlspecialchars(HOTEL_BASE_URL, ENT_QUOTES, 'UTF-8');
                     <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/pagos/pagar_reserva.php">
                         <i class="fa-solid fa-money-bill-transfer" aria-hidden="true"></i>
                         <span>Pagar reserva</span>
+                    </a>
+                </li>
+            <?php endif; ?>
+            <?php if ($menuCanViewReports): ?>
+                <li>
+                    <a class="enlace-menu" href="<?= $menuBaseUrl ?>/assets/modules/reportes/index.php">
+                        <i class="fa-solid fa-chart-column" aria-hidden="true"></i>
+                        <span>Reportes</span>
                     </a>
                 </li>
             <?php endif; ?>

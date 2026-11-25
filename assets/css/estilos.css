@@ -768,6 +768,71 @@ body {
     font-weight: 700;
 }
 
+.filtros-reportes {
+    display: grid;
+    grid-template-columns: minmax(180px, 1.4fr) repeat(2, minmax(150px, 1fr)) auto auto;
+    align-items: end;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 16px;
+    border: 1px solid #d5e6e3;
+    border-radius: 12px;
+    background: #f7fbfa;
+}
+
+.filtros-reportes > div {
+    display: grid;
+    gap: 6px;
+}
+
+.filtros-reportes label {
+    color: #173f3d;
+    font-weight: 700;
+}
+
+.filtros-reportes input,
+.filtros-reportes select {
+    min-height: 40px;
+    width: 100%;
+    border: 1px solid #b7cfca;
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: #173f3d;
+    background: #ffffff;
+}
+
+.resumen-estados {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.resumen-estados > div,
+.detalle-reporte {
+    padding: 16px;
+    border: 1px solid #d5e6e3;
+    border-radius: 12px;
+}
+
+.resumen-estados h2,
+.detalle-reporte h2 {
+    margin-bottom: 12px;
+    color: #173f3d;
+}
+
+.resumen-estados ul {
+    list-style: none;
+}
+
+.resumen-estados li {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 8px 0;
+    border-bottom: 1px solid #edf4f2;
+}
+
 .estado-habitacion-disponible {
     border-color: #b8bfc1;
     background: #e5e7e8;
@@ -885,6 +950,11 @@ body {
     }
 
     .dashboard-resumen {
+        grid-template-columns: 1fr;
+    }
+
+    .filtros-reportes,
+    .resumen-estados {
         grid-template-columns: 1fr;
     }
 
